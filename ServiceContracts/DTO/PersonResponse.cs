@@ -1,4 +1,5 @@
 ﻿using Entities;
+using ServiceContracts.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace ServiceContracts.DTO
         public Guid? CountryId { get; set; }
         public string? Country {  get; set; }
         public string? Address { get; set; }
-        public bool ReceieveNewsletter { get; set; }
+        public bool ReceiveNewsLetters { get; set; }
         public double? Age { get; set; }
 
         public override bool Equals(object? obj)
@@ -32,12 +33,27 @@ namespace ServiceContracts.DTO
             }
 
             PersonResponse other = (PersonResponse) obj;
-            return PersonId == other.PersonId && PersonName == other.PersonName && Email == other.Email && DateOfBirth == other.DateOfBirth && Gender == other.Gender && CountryId == other.CountryId && Address == other.Address && ReceieveNewsletter == other.ReceieveNewsletter;
+            return PersonId == other.PersonId && PersonName == other.PersonName && Email == other.Email && DateOfBirth == other.DateOfBirth && Gender == other.Gender && CountryId == other.CountryId && Address == other.Address && ReceiveNewsLetters == other.ReceiveNewsLetters;
         }
 
         public override int GetHashCode()
         {
             return base.GetHashCode();
+        }
+
+        public PersonUpdateRequest ToPersonUpdateRequest() 
+        {
+            return new PersonUpdateRequest()
+            {
+                PersonId = PersonId,
+                PersonName = PersonName,
+                Email = Email,
+                DateOfBirth = DateOfBirth,
+                Address = Address,
+                ReceieveNewsletter = ReceiveNewsLetters,
+                CountryId = CountryId,
+                Gender = (GenderOptions)Enum.Parse(typeof(GenderOptions), Gender, true)
+            };
         }
     }
 
@@ -54,7 +70,7 @@ namespace ServiceContracts.DTO
                 Gender = person.Gender,
                 Address = person.Address,
                 CountryId = person.CountryId,
-                ReceieveNewsletter = person.ReceieveNewsletter,
+                ReceiveNewsLetters = person.ReceiveNewsLetters,
                 Age = (person.DateOfBirth!=null) ? Math.Round((DateTime.Now - person.DateOfBirth.Value).TotalDays/365.25) : null
             };
         }
