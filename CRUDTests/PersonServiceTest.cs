@@ -20,7 +20,7 @@ namespace CRUDTests
         public PersonServiceTest() 
         {
             _personService = new PersonService();
-            _countriesService = new CountriesService();
+            _countriesService = new CountriesService(false);
         }
 
         #region AddPerson
