@@ -50,7 +50,7 @@ namespace ServiceContracts.DTO
                 Email = Email,
                 DateOfBirth = DateOfBirth,
                 Address = Address,
-                ReceieveNewsletter = ReceiveNewsLetters,
+                ReceiveNewsLetters = ReceiveNewsLetters,
                 CountryId = CountryId,
                 Gender = (GenderOptions)Enum.Parse(typeof(GenderOptions), Gender, true)
             };

@@ -215,7 +215,7 @@ namespace Services
             matchingPerson.Gender = personUpdateRequest.Gender.ToString();
             matchingPerson.CountryId = personUpdateRequest.CountryId;
             matchingPerson.Address = personUpdateRequest.Address;
-            matchingPerson.ReceiveNewsLetters = personUpdateRequest.ReceieveNewsletter;
+            matchingPerson.ReceiveNewsLetters = personUpdateRequest.ReceiveNewsLetters;
 
             return ConvertToPersonResponse(matchingPerson);
         }
