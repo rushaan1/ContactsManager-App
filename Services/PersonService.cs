@@ -209,6 +209,7 @@ namespace Services
                 throw new ArgumentException("Given person id doesn't exist.");
             }
 
+            
             matchingPerson.PersonName = personUpdateRequest.PersonName;
             matchingPerson.Email = personUpdateRequest.Email;
             matchingPerson.DateOfBirth = personUpdateRequest.DateOfBirth;

@@ -19,7 +19,7 @@ namespace CRUDTests
 
         public PersonServiceTest() 
         {
-            _personService = new PersonService();
+            _personService = new PersonService(false);
             _countriesService = new CountriesService(false);
         }
 
