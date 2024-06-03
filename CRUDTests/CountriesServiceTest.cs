@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ServiceContracts.DTO;
+using Microsoft.EntityFrameworkCore;
+using Entities;
 
 namespace CRUDTests
 {
@@ -16,7 +18,7 @@ namespace CRUDTests
 
         public CountriesServiceTest() 
         {
-            _countriesService = new CountriesService(false);
+            _countriesService = new CountriesService(new PersonsDbContext(new DbContextOptionsBuilder<PersonsDbContext>().Options));
         }
 
         #region AddCountry
