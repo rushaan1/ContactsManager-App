@@ -1,4 +1,5 @@
 ﻿using Entities;
+using Microsoft.EntityFrameworkCore;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
@@ -22,13 +23,6 @@ namespace Services
             _countriesService = countriesService;
         }
 
-        public PersonResponse ConvertToPersonResponse(Person person) 
-        {
-            PersonResponse response = person.ToPersonResponse();
-            response.Country = _countriesService.GetCountryByCountryId(person.CountryId)?.CountryName;
-            return response;
-        }
-
         public PersonResponse AddPerson(PersonAddRequest? personAddRequest)
         {
             if (personAddRequest == null) 
@@ -46,12 +40,12 @@ namespace Services
             person.PersonId = Guid.NewGuid();
             _db.Persons.Add(person);
             _db.SaveChanges();
-            return ConvertToPersonResponse(person);
+            return person.ToPersonResponse(); ;
         }
 
         public List<PersonResponse> GetAllPersons()
         {
-            return _db.Persons.ToList().Select(temp=>ConvertToPersonResponse(temp)).ToList();
+            return _db.Persons.Include("Country").ToList().Select(temp=>temp.ToPersonResponse()).ToList();
         }
 
         public PersonResponse? GetPersonByPersonId(Guid? personId)
@@ -61,13 +55,13 @@ namespace Services
                 return null;
             }
 
-            Person? person = _db.Persons.FirstOrDefault(temp => temp.PersonId == personId);
+            Person? person = _db.Persons.Include("Country").ToList().FirstOrDefault(temp => temp.PersonId == personId);
             if (person == null) 
             {
                 return null;
             }
 
-            return ConvertToPersonResponse(person);
+            return person.ToPersonResponse();
         }
 
         public List<PersonResponse> GetFilteredPersons(string searchBy, string? searchString)
@@ -179,7 +173,7 @@ namespace Services
 
             ValidationHelper.ModelValidation(personUpdateRequest);
 
-            Person? matchingPerson = _db.Persons.FirstOrDefault(temp=>temp.PersonId==personUpdateRequest.PersonId);
+            Person? matchingPerson = _db.Persons.Include("Country").ToList().FirstOrDefault(temp=>temp.PersonId==personUpdateRequest.PersonId);
 
             if (matchingPerson == null) 
             {
@@ -195,7 +189,7 @@ namespace Services
             matchingPerson.Address = personUpdateRequest.Address;
             matchingPerson.ReceiveNewsLetters = personUpdateRequest.ReceiveNewsLetters;
             _db.SaveChanges();
-            return ConvertToPersonResponse(matchingPerson);
+            return matchingPerson.ToPersonResponse();
         }
 
         public bool DeletePerson(Guid? personId)
@@ -205,12 +199,12 @@ namespace Services
                 throw new ArgumentNullException(nameof(personId));
             }
 
-            Person? person = _db.Persons.FirstOrDefault(temp=> temp.PersonId==personId);
+            Person? person = _db.Persons.Include("Country").ToList().FirstOrDefault(temp=> temp.PersonId==personId);
             if (person == null) 
             {
                 return false;
             }
-            _db.Persons.Remove(_db.Persons.First(temp => temp.PersonId == personId));
+            _db.Persons.Remove(_db.Persons.Include("Country").ToList().First(temp => temp.PersonId == personId));
             _db.SaveChanges();
             return true;
         }

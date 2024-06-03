@@ -35,6 +35,16 @@ namespace Entities
             {
                 modelBuilder.Entity<Person>().HasData(p);
             }
+
+            modelBuilder.Entity<Person>().Property(p => p.TIN)
+                .HasColumnName("TaxIdentificationNumber")
+                .HasColumnType("varchar(8)")
+                .HasDefaultValue("ABC12345");
+
+            modelBuilder.Entity<Person>()
+                .HasCheckConstraint("CHK_TIN", "len([TaxIdentificationNumber]) = 8");
+
+            //modelBuilder.Entity<Person>(e => { e.HasOne<Country>(c => c.Country).WithMany(p => p.Persons).HasForeignKey(p => p.CountryId); });
         }
     }
 }
