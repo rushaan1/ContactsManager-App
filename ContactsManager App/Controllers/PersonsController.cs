@@ -19,7 +19,7 @@ namespace ContactsManager_App.Controllers
 
         [Route("/persons/index")]
         [Route("/")]
-        public IActionResult Index(string searchBy, string? searchString, string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrder = SortOrderOptions.ASC) 
+        public async Task<IActionResult> Index(string searchBy, string? searchString, string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrder = SortOrderOptions.ASC) 
         {
             ViewBag.SearchFields = new Dictionary<string, string>()
             {
@@ -36,8 +36,8 @@ namespace ContactsManager_App.Controllers
             ViewBag.CurrentSortBy = sortBy;
             ViewBag.CurrentSortOrder = sortOrder.ToString();
 
-            List<PersonResponse> persons = _personService.GetFilteredPersons(searchBy, searchString);
-            List<PersonResponse> sortedPersons = _personService.GetSortedPersons(persons, sortBy, sortOrder);
+            List<PersonResponse> persons = await _personService.GetFilteredPersons(searchBy, searchString);
+            List<PersonResponse> sortedPersons = await _personService.GetSortedPersons(persons, sortBy, sortOrder);
             foreach (PersonResponse p in sortedPersons) 
             {
                 Console.WriteLine("Sorted id: "+p.PersonId);
@@ -54,34 +54,34 @@ namespace ContactsManager_App.Controllers
 
         [HttpGet]
         [Route("/persons/create")]
-        public IActionResult Create() 
+        public async Task<IActionResult> Create() 
         {
-            List<CountryResponse> allCountries = _countriesService.GetAllCountries();
+            List<CountryResponse> allCountries = await _countriesService.GetAllCountries();
             ViewBag.Countries = allCountries.Select(c=>new SelectListItem() { Text = c.CountryName, Value = c.CountryId.ToString() });
             return View();
         }
 
         [HttpPost]
         [Route("/persons/create")]
-        public IActionResult Create(PersonAddRequest personAddRequest) 
+        public async Task<IActionResult> Create(PersonAddRequest personAddRequest) 
         {
             if (!ModelState.IsValid) 
             {
-                List<CountryResponse> allCountries = _countriesService.GetAllCountries();
+                List<CountryResponse> allCountries = await _countriesService.GetAllCountries();
                 ViewBag.Countries = allCountries.Select(c => new SelectListItem() { Text = c.CountryName, Value = c.CountryId.ToString() });
                 ViewBag.Errors = ModelState.Values.SelectMany(v=>v.Errors).Select(e=>e.ErrorMessage).ToList();
                 return View();
             }
-            PersonResponse personResponse = _personService.AddPerson(personAddRequest);
+            PersonResponse personResponse = await _personService.AddPerson(personAddRequest);
             Console.WriteLine("Redirecting...");
             return RedirectToAction("Index", "Persons");
         }
 
         [HttpGet]
         [Route("/persons/edit/{personId}")]
-        public IActionResult Edit(Guid personId) 
+        public async Task<IActionResult> Edit(Guid personId) 
         {
-            PersonResponse? person = _personService.GetPersonByPersonId(personId);
+            PersonResponse? person = await _personService.GetPersonByPersonId(personId);
             if (person == null)
             {
                 return RedirectToAction("Index");
@@ -89,7 +89,7 @@ namespace ContactsManager_App.Controllers
 
             PersonUpdateRequest updateReq = person.ToPersonUpdateRequest();
 
-            List<CountryResponse> countries = _countriesService.GetAllCountries();
+            List<CountryResponse> countries = await _countriesService.GetAllCountries();
             ViewBag.Countries = countries.Select(temp =>
             new SelectListItem() { Text = temp.CountryName, Value = temp.CountryId.ToString() });
 
@@ -99,9 +99,9 @@ namespace ContactsManager_App.Controllers
 
         [HttpPost]
         [Route("/persons/edit/{personId}")]
-        public IActionResult Edit(PersonUpdateRequest personUpdateRequest) 
+        public async Task<IActionResult> Edit(PersonUpdateRequest personUpdateRequest) 
         {
-            PersonResponse? personResponse = _personService.GetPersonByPersonId(personUpdateRequest.PersonId);
+            PersonResponse? personResponse = await _personService.GetPersonByPersonId(personUpdateRequest.PersonId);
             if (personResponse == null) 
             {
                 return RedirectToAction("Index");
@@ -109,12 +109,12 @@ namespace ContactsManager_App.Controllers
 
             if (ModelState.IsValid)
             {
-                PersonResponse updated = _personService.UpdatePerson(personUpdateRequest);
+                PersonResponse updated = await _personService.UpdatePerson(personUpdateRequest);
                 return RedirectToAction("Index");
             }
             else 
             {
-                List<CountryResponse> allCountries = _countriesService.GetAllCountries();
+                List<CountryResponse> allCountries = await _countriesService.GetAllCountries();
                 ViewBag.Countries = allCountries.Select(c => new SelectListItem() { Text = c.CountryName, Value = c.CountryId.ToString() });
                 ViewBag.Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
                 return View(personResponse.ToPersonUpdateRequest());
@@ -124,9 +124,9 @@ namespace ContactsManager_App.Controllers
 
         [HttpGet]
         [Route("/persons/delete/{personId}")]
-        public IActionResult Delete(Guid personId) 
+        public async Task<IActionResult> Delete(Guid personId) 
         {
-            PersonResponse? pr = _personService.GetPersonByPersonId(personId);
+            PersonResponse? pr = await _personService.GetPersonByPersonId(personId);
             if (pr == null) 
             {
                 return RedirectToAction("Index");
@@ -137,14 +137,14 @@ namespace ContactsManager_App.Controllers
 
         [HttpPost]
         [Route("/persons/delete/{personId}")]
-        public IActionResult Delete(PersonUpdateRequest p) 
+        public async Task<IActionResult> Delete(PersonUpdateRequest p) 
         {
-            PersonResponse? pr = _personService.GetPersonByPersonId(p.PersonId);
+            PersonResponse? pr = await _personService.GetPersonByPersonId(p.PersonId);
             if (pr == null) 
             {
                 return RedirectToAction("Index");
             }
-            _personService.DeletePerson(pr.PersonId);
+            await _personService.DeletePerson(pr.PersonId);
             return RedirectToAction("Index");
         }
     }
