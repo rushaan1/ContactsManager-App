@@ -20,6 +20,7 @@ namespace ContactsManager_App
             });
 
             var app = builder.Build();
+            Rotativa.AspNetCore.RotativaConfiguration.Setup("wwwroot", wkhtmltopdfRelativePath: "Rotativa");
 
             app.UseRouting();
             app.UseStaticFiles();
