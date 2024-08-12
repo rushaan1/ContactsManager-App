@@ -10,6 +10,10 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
+using CsvHelper;
+using CsvHelper.Configuration;
+using System.Globalization;
 
 namespace Services
 {
@@ -210,6 +214,43 @@ namespace Services
             _db.Persons.Remove(_db.Persons.Include("Country").ToList().First(temp => temp.PersonId == personId));
             await _db.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<MemoryStream> GetPersonCSV() 
+        {
+            MemoryStream memoryStream = new MemoryStream();
+            StreamWriter streamWriter = new StreamWriter(memoryStream);
+            CsvWriter writer = new CsvWriter(streamWriter, new CsvConfiguration(CultureInfo.InvariantCulture));
+
+            writer.WriteField(nameof(PersonResponse.PersonName));
+            writer.WriteField(nameof(PersonResponse.Email));
+            writer.WriteField(nameof(PersonResponse.DateOfBirth));
+            writer.WriteField(nameof(PersonResponse.Age));
+            writer.WriteField(nameof(PersonResponse.Gender));
+            writer.WriteField(nameof(PersonResponse.Country));
+            writer.WriteField(nameof(PersonResponse.Address));
+            writer.WriteField(nameof(PersonResponse.ReceiveNewsLetters));
+            writer.NextRecord();
+
+            List<PersonResponse> ppl = await GetAllPersons();
+
+            foreach (PersonResponse person in ppl) 
+            {
+                writer.WriteField(person.PersonName);
+                writer.WriteField(person.Email);
+                writer.WriteField(person.DateOfBirth.HasValue ? person.DateOfBirth.Value.ToString("yyyy-MM-dd") : "");
+                writer.WriteField(person.Age);
+                writer.WriteField(person.Gender);
+                writer.WriteField(person.Country);
+                writer.WriteField(person.Address);
+                writer.WriteField(person.ReceiveNewsLetters);
+                writer.NextRecord();
+                writer.Flush();
+            }
+
+            memoryStream.Position = 0;
+
+            return memoryStream; 
         }
     }
 }

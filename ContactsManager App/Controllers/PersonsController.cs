@@ -163,5 +163,12 @@ namespace ContactsManager_App.Controllers
                 PageOrientation = Rotativa.AspNetCore.Options.Orientation.Landscape
             };
         }
+
+        [Route("persons/PersonsCSV")]
+        public async Task<IActionResult> PersonsCSV() 
+        {
+            MemoryStream stream = await _personService.GetPersonCSV();
+            return File(stream, "application/octet-stream", "people.csv");
+        }
     }
 }
