@@ -14,6 +14,7 @@ using System.IO;
 using CsvHelper;
 using CsvHelper.Configuration;
 using System.Globalization;
+using OfficeOpenXml;
 
 namespace Services
 {
@@ -251,6 +252,50 @@ namespace Services
             memoryStream.Position = 0;
 
             return memoryStream; 
+        }
+        public async Task<MemoryStream> GetPersonsExcel() 
+        {
+            MemoryStream memoryStream = new MemoryStream();
+            using (ExcelPackage ep = new ExcelPackage(memoryStream)) 
+            {
+                ExcelWorksheet sheet = ep.Workbook.Worksheets.Add("PeopleSheet");
+                sheet.Cells["A1"].Value = nameof(PersonResponse.PersonName);
+                sheet.Cells["B1"].Value = nameof(PersonResponse.Email);
+                sheet.Cells["C1"].Value = nameof(PersonResponse.DateOfBirth);
+                sheet.Cells["D1"].Value = nameof(PersonResponse.Age);
+                sheet.Cells["E1"].Value = nameof(PersonResponse.Gender);
+                sheet.Cells["F1"].Value = nameof(PersonResponse.Country);
+                sheet.Cells["G1"].Value = nameof(PersonResponse.Address);
+                sheet.Cells["H1"].Value = nameof(PersonResponse.ReceiveNewsLetters);
+
+                using (ExcelRange headerCells = sheet.Cells["A1:H1"]) 
+                {
+                    headerCells.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                    headerCells.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
+                    headerCells.Style.Font.Bold = true;
+                }
+
+                int row = 2;
+                var ppl = await GetAllPersons();
+                foreach (var p in ppl) 
+                {
+                    sheet.Cells[row, 1].Value = p.PersonName;
+                    sheet.Cells[row, 2].Value = p.Email;
+                    if (p.DateOfBirth.HasValue)
+                        sheet.Cells[row, 3].Value = p.DateOfBirth.Value.ToString("yyyy-MM-dd");
+                    sheet.Cells[row, 4].Value = p.Age;
+                    sheet.Cells[row, 5].Value = p.Gender;
+                    sheet.Cells[row, 6].Value = p.Country;
+                    sheet.Cells[row, 7].Value = p.Address;
+                    sheet.Cells[row, 8].Value = p.ReceiveNewsLetters;
+
+                    row++;
+                }
+                sheet.Cells[$"A1:H{row}"].AutoFitColumns();
+                await ep.SaveAsync();
+            }
+            memoryStream.Position = 0;
+            return memoryStream;
         }
     }
 }
