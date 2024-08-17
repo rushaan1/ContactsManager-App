@@ -73,8 +73,10 @@ namespace Services
         {
             if (String.IsNullOrEmpty(searchString) || String.IsNullOrWhiteSpace(searchString)) 
             {
-                List<Person> everyone = await _personRepository.GetAllPersons();
-                return everyone.Select(p => p.ToPersonResponse()).ToList();
+                //List<Person> everyone = await _personRepository.GetAllPersons();
+                //return everyone.Select(p => p.ToPersonResponse()).ToList();
+                List<Person> ppl = await _personRepository.GetFilteredPersons(p => true);
+                return ppl.Select(p=>p.ToPersonResponse()).ToList();
             }
             List<Person> matchingPersons = searchBy switch
             {
