@@ -72,7 +72,7 @@ namespace ContactsManager_App.Controllers
                 List<CountryResponse> allCountries = await _countriesService.GetAllCountries();
                 ViewBag.Countries = allCountries.Select(c => new SelectListItem() { Text = c.CountryName, Value = c.CountryId.ToString() });
                 ViewBag.Errors = ModelState.Values.SelectMany(v=>v.Errors).Select(e=>e.ErrorMessage).ToList();
-                return View();
+                return View(personAddRequest);
             }
             PersonResponse personResponse = await _personService.AddPerson(personAddRequest);
             Console.WriteLine("Redirecting...");
