@@ -12,10 +12,12 @@ namespace ContactsManager_App.Controllers
     {
         IPersonService _personService;
         ICountriesService _countriesService;
-        public PersonsController(IPersonService personService, ICountriesService countriesService) 
+        ILogger<PersonsController> _logger;
+        public PersonsController(IPersonService personService, ICountriesService countriesService, ILogger<PersonsController> logger)
         {
             _personService = personService;
             _countriesService = countriesService;
+            _logger = logger;
         }
 
 
@@ -23,6 +25,9 @@ namespace ContactsManager_App.Controllers
         [Route("/")]
         public async Task<IActionResult> Index(string searchBy, string? searchString, string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrder = SortOrderOptions.ASC) 
         {
+            _logger.LogInformation("Index Action method of Persons Controller");
+            _logger.LogDebug($"searchBy: {searchBy}, searchString: {searchString}, sortBy: {sortBy}, sortOrder: {sortOrder}");
+            
             ViewBag.SearchFields = new Dictionary<string, string>()
             {
                 { nameof(PersonResponse.PersonName), "Person Name" },

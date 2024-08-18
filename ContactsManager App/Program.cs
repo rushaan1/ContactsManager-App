@@ -12,6 +12,12 @@ namespace ContactsManager_App
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Logging.ClearProviders();
+            builder.Logging.AddConsole();
+            builder.Logging.AddDebug();
+            builder.Logging.AddEventLog();
+
             builder.Services.AddControllersWithViews();
             builder.Services.AddScoped<ICountriesRepository, CountriesRepository>();
             builder.Services.AddScoped<IPersonsRepository, PersonsRepository>();
@@ -21,10 +27,15 @@ namespace ContactsManager_App
             {
                 options.UseSqlServer(builder.Configuration["ConnectionStrings:Default"]!);
             });
+            builder.Services.AddHttpLogging(options => 
+            {
+                options.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.RequestProperties | Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.ResponsePropertiesAndHeaders;
+            });
 
             var app = builder.Build();
             Rotativa.AspNetCore.RotativaConfiguration.Setup("wwwroot", wkhtmltopdfRelativePath: "Rotativa");
 
+            app.UseHttpLogging();
             app.UseRouting();
             app.UseStaticFiles();
             app.MapControllers();
