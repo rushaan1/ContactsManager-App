@@ -2,6 +2,7 @@ using Entities;
 using Microsoft.EntityFrameworkCore;
 using Repositories;
 using RepositoryContracts;
+using Serilog;
 using ServiceContracts;
 using Services;
 
@@ -13,10 +14,13 @@ namespace ContactsManager_App
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Logging.ClearProviders();
-            builder.Logging.AddConsole();
-            builder.Logging.AddDebug();
-            builder.Logging.AddEventLog();
+            builder.Host.UseSerilog((HostBuilderContext context, IServiceProvider services, LoggerConfiguration loggerConfiguration) => 
+            {
+                loggerConfiguration
+                .ReadFrom.Configuration(context.Configuration)
+                .ReadFrom.Services(services);
+
+            });
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddScoped<ICountriesRepository, CountriesRepository>();
@@ -33,6 +37,7 @@ namespace ContactsManager_App
             });
 
             var app = builder.Build();
+            app.UseSerilogRequestLogging();
             Rotativa.AspNetCore.RotativaConfiguration.Setup("wwwroot", wkhtmltopdfRelativePath: "Rotativa");
 
             app.UseHttpLogging();

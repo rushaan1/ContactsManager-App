@@ -16,6 +16,8 @@ using AutoFixture;
 using FluentAssertions;
 using RepositoryContracts;
 using System.Linq.Expressions;
+using Serilog;
+using Microsoft.Extensions.Logging;
 
 namespace CRUDTests
 {
@@ -25,13 +27,16 @@ namespace CRUDTests
         private readonly IFixture _fixture;
         private readonly Mock<IPersonsRepository> _personRepositoryMock;
         private readonly IPersonsRepository _personsRepository;
-
+        private readonly Mock<IDiagnosticContext> _diagonsticContextMock;
+        private readonly Mock<ILogger<PersonService>> _loggerMock;
         public PersonServiceTest() 
         {
             _fixture = new Fixture();
             _personRepositoryMock = new Mock<IPersonsRepository>();
             _personsRepository = _personRepositoryMock.Object;
-            _personService = new PersonService(_personsRepository);
+            _diagonsticContextMock = new Mock<IDiagnosticContext>();
+            _loggerMock = new Mock<ILogger<PersonService>>();
+            _personService = new PersonService(_personsRepository, _loggerMock.Object, _diagonsticContextMock.Object);
             
         }
 
