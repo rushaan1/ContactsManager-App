@@ -1,3 +1,4 @@
+using ContactsManager_App.Filters.ActionFilters;
 using Entities;
 using Microsoft.EntityFrameworkCore;
 using Repositories;
@@ -22,7 +23,11 @@ namespace ContactsManager_App
 
             });
 
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddControllersWithViews(options => 
+            {
+                var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<ResponseHeaderActionFilter>>();
+                options.Filters.Add(new ResponseHeaderActionFilter(logger, "My-Key-From-Global", "My-Value-FromGlobal", 2));
+            });
             builder.Services.AddScoped<ICountriesRepository, CountriesRepository>();
             builder.Services.AddScoped<IPersonsRepository, PersonsRepository>();
             builder.Services.AddScoped<ICountriesService, CountriesService>();
