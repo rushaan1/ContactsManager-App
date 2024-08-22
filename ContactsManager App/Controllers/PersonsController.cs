@@ -1,4 +1,5 @@
-﻿using ContactsManager_App.Filters.ActionFilters;
+﻿using ContactsManager_App.Filters;
+using ContactsManager_App.Filters.ActionFilters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Rotativa.AspNetCore;
@@ -9,7 +10,7 @@ using Services;
 
 namespace ContactsManager_App.Controllers
 {
-    [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new Object[] { "X-Custom-Key-From-Controller", "Custom-Value-From-Controller", 3 }, Order = 3)]
+    [ResponseHeaderFilterFactory("My-Key-From-Global", "My-Value-FromGlobal", 2)]
     public class PersonsController : Controller
     {
         IPersonService _personService;
@@ -26,7 +27,7 @@ namespace ContactsManager_App.Controllers
         [Route("/persons/index")]
         [Route("/")]
         [TypeFilter(typeof(PersonsListActionFilter), Order = 4)]
-        [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new Object[]{ "X-Custom-Key-From-Method", "-From-Controller-From-Method", 1}, Order = 1)]
+        [ResponseHeaderFilterFactory("My-Key-From-Global", "My-Value-FromGlobal", 2)]
         public async Task<IActionResult> Index(string searchBy, string? searchString, string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrder = SortOrderOptions.ASC) 
         {
             _logger.LogInformation("Index Action method of Persons Controller");

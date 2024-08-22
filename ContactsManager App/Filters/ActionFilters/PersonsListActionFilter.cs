@@ -1,6 +1,7 @@
 ﻿using ContactsManager_App.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using ServiceContracts.DTO;
+using ServiceContracts.Enums;
 
 namespace ContactsManager_App.Filters.ActionFilters
 {
@@ -30,9 +31,17 @@ namespace ContactsManager_App.Filters.ActionFilters
                 {
                     personsController.ViewBag.CurrentSortBy = Convert.ToString(parameters["sortBy"]);
                 }
+                else 
+                {
+                    personsController.ViewBag.CurrentSortBy = nameof(PersonResponse.PersonName);
+                }
                 if (parameters.ContainsKey("sortOrder"))
                 {
                     personsController.ViewBag.CurrentSortOrder = Convert.ToString(parameters["sortOrder"]);
+                }
+                else 
+                {
+                    personsController.ViewBag.CurrentSortOrder = nameof(SortOrderOptions.ASC);
                 }
 
                 personsController.ViewBag.SearchFields = new Dictionary<string, string>()

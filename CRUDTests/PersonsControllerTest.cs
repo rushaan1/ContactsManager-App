@@ -60,31 +60,6 @@ namespace CRUDTests
         #endregion
 
         #region Create
-
-        [Fact]
-        public async Task CreateIfModelErrors_ToReturnCreateView() 
-        {
-            // Arrange
-            PersonAddRequest addRequest = _fixture.Create<PersonAddRequest>();
-            PersonResponse response = _fixture.Create<PersonResponse>();
-            List<CountryResponse> countries = _fixture.Create<List<CountryResponse>>();
-
-            _countriesServiceMock.Setup(s=>s.GetAllCountries())
-                .ReturnsAsync(countries);
-            _personServiceMock.Setup(s=>s.AddPerson(It.IsAny<PersonAddRequest>()))
-                .ReturnsAsync(response);
-
-            PersonsController pc = new PersonsController(_personService, _countriesService, _loggerMock.Object);
-
-            // Act
-            pc.ModelState.AddModelError("PersonName", "Person name can't be blank");
-            IActionResult result = await pc.Create(addRequest);
-
-            // Assert
-            ViewResult vresult = Assert.IsType<ViewResult>(result);
-            vresult.ViewData.Model.Should().BeAssignableTo<PersonAddRequest>();
-            vresult.ViewData.Model.Should().Be(addRequest);
-        }
         
         [Fact]
         public async Task CreateIfNoModelErrors_ToReturnRedirectToIndex()

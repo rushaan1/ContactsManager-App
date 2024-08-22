@@ -23,23 +23,7 @@ namespace ContactsManager_App
 
             });
 
-            builder.Services.AddControllersWithViews(options => 
-            {
-                var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<ResponseHeaderActionFilter>>();
-                options.Filters.Add(new ResponseHeaderActionFilter(logger, "My-Key-From-Global", "My-Value-FromGlobal", 2));
-            });
-            builder.Services.AddScoped<ICountriesRepository, CountriesRepository>();
-            builder.Services.AddScoped<IPersonsRepository, PersonsRepository>();
-            builder.Services.AddScoped<ICountriesService, CountriesService>();
-            builder.Services.AddScoped<IPersonService, PersonService>();
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            {
-                options.UseSqlServer(builder.Configuration["ConnectionStrings:Default"]!);
-            });
-            builder.Services.AddHttpLogging(options => 
-            {
-                options.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.RequestProperties | Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.ResponsePropertiesAndHeaders;
-            });
+            builder.Services.ConfigureServices(builder.Configuration);
 
             var app = builder.Build();
             app.UseSerilogRequestLogging();
