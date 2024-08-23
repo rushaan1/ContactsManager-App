@@ -1,4 +1,5 @@
 using ContactsManager_App.Filters.ActionFilters;
+using ContactsManager_App.Middleware;
 using Entities;
 using Microsoft.EntityFrameworkCore;
 using Repositories;
@@ -26,6 +27,15 @@ namespace ContactsManager_App
             builder.Services.ConfigureServices(builder.Configuration);
 
             var app = builder.Build();
+            if (builder.Environment.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler("/Error");
+                app.UseExceptionHandlingMiddleware();
+            }
             app.UseSerilogRequestLogging();
             Rotativa.AspNetCore.RotativaConfiguration.Setup("wwwroot", wkhtmltopdfRelativePath: "Rotativa");
 
