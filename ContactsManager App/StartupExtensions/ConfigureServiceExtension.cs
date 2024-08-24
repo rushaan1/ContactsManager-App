@@ -22,7 +22,11 @@ namespace ContactsManager_App
             services.AddScoped<ICountriesRepository, CountriesRepository>();
             services.AddScoped<IPersonsRepository, PersonsRepository>();
             services.AddScoped<ICountriesService, CountriesService>();
-            services.AddScoped<IPersonService, PersonService>();
+            services.AddScoped<IPersonAdderService, PersonAdderService>();
+            services.AddScoped<IPersonGetterService, PersonGetterService>();
+            services.AddScoped<IPersonSorterService, PersonSorterService>();
+            services.AddScoped<IPersonUpdaterService, PersonUpdaterService>();
+            services.AddScoped<IPersonDeleterService, PersonDeleterService>();
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options.UseSqlServer(configuration.GetConnectionString("Default")!);
