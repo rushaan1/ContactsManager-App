@@ -60,6 +60,11 @@ namespace ContactsManager.Web.Controllers
                 }
                 else 
                 {
+                    if (await _roleManager.FindByNameAsync(UserTypeOptions.User.ToString()) is null)
+                    {
+                        ApplicationRole applicationRole = new ApplicationRole() { Name = UserTypeOptions.User.ToString() };
+                        await _roleManager.CreateAsync(applicationRole);
+                    }
                     await _userManager.AddToRoleAsync(user, UserTypeOptions.User.ToString());
                 }
                 await _signInManager.SignInAsync(user, isPersistent: true);
