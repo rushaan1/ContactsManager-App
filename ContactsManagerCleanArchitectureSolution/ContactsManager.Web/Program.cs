@@ -36,6 +36,8 @@ namespace ContactsManager_App
                 app.UseExceptionHandler("/Error");
                 app.UseExceptionHandlingMiddleware();
             }
+            //app.UseHsts();
+            //app.UseHttpsRedirection();
             app.UseSerilogRequestLogging();
             if (builder.Environment.IsEnvironment("Test") == false)
             {
@@ -44,8 +46,14 @@ namespace ContactsManager_App
             app.UseHttpLogging();
             app.UseRouting();
             app.UseStaticFiles();
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.MapControllers();
 
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute(name: "areas", pattern: "{area:exists}/{controller=Home}/{action=Index}");
+            });
             app.Run();
         }
     }

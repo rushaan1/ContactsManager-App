@@ -1,7 +1,8 @@
-﻿@model PersonAddRequest
+﻿@model RegisterDTO
+
 @{
-    ViewBag.Title = "Create Person";
-    ViewBag.CurrentUrl = "/persons/create";
+    ViewBag.Title = "Register";
+    ViewBag.CurrentUrl = "/Account/Register";
 }
 
 <div class="flex">
@@ -9,139 +10,102 @@
         <div class="text-grey">
             <span>Contacts</span>
             <i class="fa-solid fa-caret-right"></i>
-            <span class="text-grey">Persons</span>
-            <i class="fa-solid fa-caret-right"></i>
-            <span class="text-grey">Create</span>
+            <span class="text-grey">Register</span>
         </div>
     </div>
 </div>
 
-
 <div class="form-container">
-    <a asp-controller="Persons" asp-action="Index" class="link-hover">Back to Persons List</a>
-    <h2 class="text-large">Create Person</h2>
-    <form asp-controller="Persons" asp-action="Create" method="post">
-
+    Already Registerd? <a asp-action="Login" asp-controller="Account" class="link-hover">Login</a>
+    <h2 class="text-large">Register</h2>
+    <form asp-controller="Account" asp-action="Register" method="post">
         @*Person Name*@
         <div class="form-field flex">
             <div class="w-25">
-                <label asp-for="PersonName" class="form-label pt">Person Name</label>
+                <label asp-for="PersonName" class="form-label pt">Name</label>
             </div>
             <div class="flex-1">
-                <input asp-for="PersonName" class="form-input" />
+                <input asp-for="PersonName" class="form-input"/>
                 <span asp-validation-for="PersonName" class="text-red"></span>
             </div>
         </div>
-        
-
 
         @*Email*@
         <div class="form-field flex">
             <div class="w-25">
-                <label asp-for="Email" class="form-label">Email</label>
+                <label asp-for="Email" class="form-label pt">Email</label>
             </div>
             <div class="flex-1">
                 <input asp-for="Email" class="form-input" />
                 <span asp-validation-for="Email" class="text-red"></span>
             </div>
         </div>
-        
 
-
-        @*DateOfBirth*@
+        @*Password*@
         <div class="form-field flex">
             <div class="w-25">
-                <label asp-for="DateOfBirth" class="form-label">Date of Birth</label>
+                <label asp-for="Password" class="form-label pt">Password</label>
             </div>
             <div class="flex-1">
-                <input asp-for="DateOfBirth" class="form-input" />
-                <span asp-validation-for="DateOfBirth" class="text-red"></span>
-            </div>
-        </div>
-        
-
-
-        @*Gender*@
-        <div class="form-field flex">
-            <div class="w-25">
-                <label class="form-label">Gender</label>
-            </div>
-            <div class="flex-1">
-                @{
-                    string[] genders = (string[])Enum.GetNames(typeof(GenderOptions));
-                }
-                @foreach (var gender in genders) 
-                {
-                    <input class="ml" type="radio" asp-for="Gender" value="@gender" />
-                    <label asp-for="@gender">@gender</label>
-                }
-                <span asp-validation-for="Gender" class="text-red"></span>
-            </div>
-        </div>
-        
-
-
-        @*Country*@
-        <div class="form-field flex">
-            <div class="w-25">
-                <label asp-for="CountryId" class="form-label">Country</label>
-            </div>
-            <div class="flex-1">
-                <select asp-for="CountryId" class="form-input" asp-items="@ViewBag.Countries">
-                    <option value="">Please Select</option>
-                </select>
-                <span asp-validation-for="CountryId" class="text-red"></span>
+                <input asp-for="Password" class="form-input" />
+                <span asp-validation-for="Password" class="text-red"></span>
             </div>
         </div>
 
-
-
-        @*Address*@
+        @*ConfirmPassword*@
         <div class="form-field flex">
             <div class="w-25">
-                <label asp-for="Address" class="form-label pt">Address</label>
+                <label asp-for="ConfirmPassword" class="form-label pt">Confirm Password</label>
             </div>
             <div class="flex-1">
-                <textarea asp-for="Address" class="form-input"></textarea>
-                <span asp-validation-for="Address" class="text-red"></span>
+                <input asp-for="ConfirmPassword" class="form-input" />
+                <span asp-validation-for="ConfirmPassword" class="text-red"></span>
+            </div>
+        </div>
+
+        @*Phone*@
+        <div class="form-field flex">
+            <div class="w-25">
+                <label asp-for="Phone" class="form-label pt">Phone Number</label>
+            </div>
+            <div class="flex-1">
+                <input asp-for="Phone" class="form-input" />
+                <span asp-validation-for="Phone" class="text-red"></span>
+            </div>
+        </div>
+
+        @*User Type*@
+        <div class="form-field flex">
+            <div class="w-25">
+                <label asp-for="UserType" class="form-label pt">User Type</label>
+            </div>
+            <div class="flex-1">
+                <input asp-for="UserType" type="radio" id="User" value="User" checked />
+                <label for="User">User</label>
+
+                <input asp-for="UserType" type="radio" id="Admin" value="Admin" />
+                <label for="Admin">Admin</label>
             </div>
         </div>
 
 
-
-        @*ReceiveNewsLetters*@
+        @*Register button*@
         <div class="form-field flex">
-            <div class="w-25">
-            </div>
+            <div class="w-25"></div>
             <div class="flex-1">
-                <input asp-for="ReceiveNewsLetters" value="true" />
-                <label asp-for="ReceiveNewsLetters" class="form-label">Receive News Letters</label>
-                <span asp-validation-for="ReceiveNewsLetters" class="text-red"></span>
-            </div>
-        </div>
-
-
-
-        @*Submit Button*@
-        <div class="form-field flex">
-            <div class="w-25">
-            </div>
-            <div class="flex-1">
-                <button class="button button-green-back">Create</button>
+                <button class="button button-green-back" type="submit">Register</button>
                 
-                <div asp-validation-summary="All" class="text-red"></div>
-                @if (ViewBag.Errors != null) 
+                @if (ViewBag.Errors != null)
                 {
                     <div class="text-red ml">
                         <ul>
-                            @foreach (string error in ViewBag.Errors) 
+                            @foreach (var error in ViewBag.Errors) 
                             {
                                 <li class="ml">@error</li>
                             }
                         </ul>
                     </div>
                 }
-
             </div>
         </div>
     </form>
